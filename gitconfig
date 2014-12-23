@@ -24,8 +24,8 @@
 [commit]
 	template = /Users/mike/.gitmessage
 [user]
-  name = Mike Coutermarsh
-  email = coutermarsh.mike@gmail.com
+  name = Rafael Revi
+  email = rafael.e.revi@gmail.com
 [diff]
     tool = Kaleidoscope
 [difftool "Kaleidoscope"]
