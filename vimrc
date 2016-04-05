@@ -1,12 +1,13 @@
 set shell=/bin/bash
 runtime macros/matchit.vim
-" use old regext engine. speed up ruby syntax highlighting
-set re=1
 
 set ttyfast
 set lazyredraw
 
 let g:ruby_path="~/.rvm/bin/ruby"
+
+" have jsx highlighting/indenting work in .js files as well
+let g:jsx_ext_required = 0
 
 let $PATH='/usr/local/bin:' . $PATH
 
@@ -16,9 +17,12 @@ let $PATH='/usr/local/bin:' . $PATH
 let g:session_autoload = 'no'
 
 " Leader Mappings
-let mapleader = "\<Space>"
+map <Space> <leader>
 map <Leader>w :update<CR>
 map <Leader>q :qall<CR>
+map <Leader>gs :Gstatus<CR>
+map <Leader>gc :Gcommit<CR>
+map <Leader>gp :Gpush<CR>
 "
 " RSpec.vim mappings
 map <Leader>t :call RunCurrentSpecFile()<CR>
@@ -42,8 +46,8 @@ set notimeout
 
 " highlight vertical column of cursor
 au WinLeave * set nocursorline nocursorcolumn
-au WinEnter * set cursorline 
-set cursorline 
+au WinEnter * set cursorline
+set cursorline
 
 "key to insert mode with paste using F2 key
 map <F2> :set paste<CR>i
@@ -117,7 +121,8 @@ set tabstop=2
 set shiftwidth=2
 set expandtab
 
-let g:rspec_command = 'call Send_to_Tmux("bundle exec rspec {spec}\n")'
+let g:rspec_command = 'call Send_to_Tmux("bin/rspec {spec}\n")'
+let g:mocha_js_command = 'call Send_to_Tmux("$(npm bin)/mocha --opts spec/javascripts/mocha.opts {spec}\n")'
 let g:rspec_runner = "os_x_iterm"
 
 " Display extra whitespace
@@ -229,7 +234,17 @@ if filereadable($HOME . "/.vimrc.local")
 endif
 
 " Remove trailing whitespace on save for ruby files.
-au BufWritePre *.rb :%s/\s\+$//e
+function! s:RemoveTrailingWhitespaces()
+  "Save last cursor position
+  let l = line(".")
+  let c = col(".")
+
+  %s/\s\+$//ge
+
+  call cursor(l,c)
+endfunction
+
+au BufWritePre * :call <SID>RemoveTrailingWhitespaces()
 
 " cmd n, cmd p for fwd/backward in search
 map <C-n> :cn<CR>
@@ -240,3 +255,15 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+" Create related file (Rails Spec file if missing). :AC
+function! s:CreateRelated()
+  let related = rails#buffer().alternate_candidates()[0]
+  call s:Open(related)
+endfunction
+
+function! s:Open(file)
+  exec('vsplit ' . a:file)
+endfunction
+
+command! AC :call <SID>CreateRelated()
