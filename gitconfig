@@ -24,8 +24,8 @@
 [commit]
 	template = /Users/mike/.gitmessage
 [user]
-  name = Rafael Revi
-  email = rafael.e.revi@gmail.com
+	name = Rafael Revi
+	email = rafael.e.revi@gmail.com
 [diff]
     tool = Kaleidoscope
 [difftool "Kaleidoscope"]
@@ -51,11 +51,12 @@
 	smudge = git hawser smudge %f
 	required = true
 [filter "lfs"]
-	clean = git lfs clean %f
-	smudge = git lfs smudge %f
 [hub]
 protocol = https
 [filter "lfs"]
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
 	required = true
+[pull]
+	rebase = false
